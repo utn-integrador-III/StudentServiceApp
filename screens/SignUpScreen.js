@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import ScreenWraper from '../components/screenWraper';
 import BackButton from '../components/backButton';
 import { color } from '../thems';
+import { user_register } from '../api/userAPI';
+
 import { useNavigation } from '@react-navigation/native';
 export default function SignUpScreen() {
   const [email, setEmail] = useState('');
@@ -15,9 +17,21 @@ export default function SignUpScreen() {
 
   const handleSubmit = () =>{
     if(email && password && name){
-      // good to go
-      navigation.goBack();
-      navigation.navigate('Home');
+        // good to go
+        user_register({
+          name:name,
+          email:email,
+          password:password,
+        }).then((result)=>{
+          if (result.status === 201){
+            alert('An email with the verification code has been sent!, please verify your account');
+            navigation.goBack();
+            navigation.navigate('Forgot');
+          }
+        }).catch(err => {
+          console.error(err);
+          alert(err.toString());
+        });
       }else{
         alert('Please fill all the fields');
     }

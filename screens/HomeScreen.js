@@ -1,10 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ScreenWraper from '../components/screenWraper';
 import { color } from '../thems';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const images = {
   ajustes: require('../assets/images/ajustes.png'),
   bitacora: require('../assets/images/bitacora.png'),
@@ -33,8 +34,23 @@ var items = [
 ];
 
 export default function HomeScreen() {
+  useEffect(()=>{
+    setTimeout(()=>{
+      //handleGetToken();
+    }, 20000);
+  });
   const navigation = useNavigation();
 
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('Token');
+    console.log(dataToken);
+    if(!dataToken){
+      navigation.replace('Welcome');
+    }
+    else{
+      navigation.replace('Home');
+    }
+  };
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate(item.screen)} className="bg-white p-3 rounded-2xl mb-3 shadow-sm">
       <Image source={images[item.imageKey]} className="w-36 h-36 mb-2"/>

@@ -6,7 +6,9 @@ import ScreenWraper from '../components/screenWraper';
 import BackButton from '../components/backButton';
 import { color } from '../thems';
 import { useNavigation } from '@react-navigation/native';
-export default function SignInScreen() {
+import { user_login } from '../api/userAPI';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+export default function SignInScreen( ) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -15,16 +17,24 @@ export default function SignInScreen() {
   const handleSubmit = () =>{
     if(email && password){
       // good to go
-      navigation.goBack();
-      navigation.navigate('Home');
+      user_login({
+        email:email,
+        password:password,
+      }).then(async (result) => {
+        await AsyncStorage.setItem('Token', result.data.token);
+        console.log(result.data.token);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        });
+      })
+      .catch(err => {
+        console.error('Login failed', err);
+        alert('Login failed: ' + err.toString());
+      });
       }else{
         alert('Please fill all the fields');
     }
-  };
-
-  const handleReset = () => {
-    navigation.goBack();
-    navigation.navigate('Forgot');
   };
 
   return (
@@ -46,7 +56,7 @@ export default function SignInScreen() {
               <TextInput value={email} onChangeText={value=> setEmail(value)} className="p-4 bg-white rounded-full mb-3"/>
               <Text className={`${color.heading} text-lg font-bold`}>Password</Text>
               <TextInput value={password} onChangeText={value=> setPassword(value)}className="p-4 bg-white rounded-full mb-3"/>
-              <TouchableOpacity onPress={handleReset} className="flex-row justify-end">
+              <TouchableOpacity onPress={()=> navigation.navigate('Forgot')} className="flex-row justify-end">
                 <Text>Forgot Password?</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={()=> navigation.navigate('SignUp')} className="flex-row justify-end">

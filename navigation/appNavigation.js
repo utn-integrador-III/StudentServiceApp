@@ -22,7 +22,7 @@ export default function AppNavigation() {
         <Stack.Navigator initialRouteName="Welcome">
             <Stack.Screen options={{headerShown: false}} name="Home" component={HomeScreen} />
             <Stack.Screen options={{headerShown: false}} name="Welcome" component={WelcomeScreen} />
-            <Stack.Screen options={{headerShown: false}} name="Forgot" component={ForgotPasswordScreen} />
+            <Stack.Screen options={{headerShown: false, presentation:'modal'}} name="Forgot" component={ForgotPasswordScreen} />
             <Stack.Screen options={{headerShown: false, presentation:'modal'}} name="SignIn" component={SignInScreen} />
             <Stack.Screen options={{headerShown: false, presentation: 'modal'}} name="SignUp" component={SignUpScreen} />
             <Stack.Screen options={{headerShown: false}} name="Configuration" component={ConfigurationScreen} />

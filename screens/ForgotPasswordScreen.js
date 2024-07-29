@@ -34,7 +34,7 @@ export default function ForgotPasswordScreen() {
           </View>
 
             <View className="flex-row justify-center my-3 mt-5">
-              <Image className="h-60 w-60" source={require('../assets/images/login.png')}/>
+              <Image className="h-60 w-60" source={require('../assets/images/empty.png')}/>
             </View>
             <View className="space-y-2 mx-2">
               <Text className={`${color.heading} text-lg font-bold`}>Email</Text>
