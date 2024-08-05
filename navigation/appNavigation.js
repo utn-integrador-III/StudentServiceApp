@@ -13,6 +13,8 @@ import LostObjectScreen from '../screens/LostObjectScreen';
 import BinnacleScreen from '../screens/BinnacleScreen';
 import CategoryScreen from '../screens/CategoryScreen';
 import ZoneScreen from '../screens/ZoneScreen';
+import AddReportScreen from '../screens/addReportScreen';
+import UpdateScreen from '../screens/updateScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,16 +22,18 @@ export default function AppNavigation() {
   return (
     <NavigationContainer>
         <Stack.Navigator initialRouteName="Welcome">
-            <Stack.Screen options={{headerShown: false}} name="Home" component={HomeScreen} />
             <Stack.Screen options={{headerShown: false}} name="Welcome" component={WelcomeScreen} />
             <Stack.Screen options={{headerShown: false, presentation:'modal'}} name="Forgot" component={ForgotPasswordScreen} />
             <Stack.Screen options={{headerShown: false, presentation:'modal'}} name="SignIn" component={SignInScreen} />
             <Stack.Screen options={{headerShown: false, presentation: 'modal'}} name="SignUp" component={SignUpScreen} />
+            <Stack.Screen options={{headerShown: false}} name="Home" component={HomeScreen} />
             <Stack.Screen options={{headerShown: false}} name="Configuration" component={ConfigurationScreen} />
             <Stack.Screen options={{headerShown: false}} name="Zone" component={ZoneScreen} />
             <Stack.Screen options={{headerShown: false}} name="Category" component={CategoryScreen} />
             <Stack.Screen options={{headerShown: false}} name="LostObject" component={LostObjectScreen} />
             <Stack.Screen options={{headerShown: false}} name="Binnacle" component={BinnacleScreen} />
+            <Stack.Screen options={{headerShown: false, presentation: 'modal'}} name="Add" component={AddReportScreen} />
+            <Stack.Screen options={{headerShown: false, presentation: 'modal'}} name="Update" component={UpdateScreen} />
         </Stack.Navigator>
   </NavigationContainer>
   );

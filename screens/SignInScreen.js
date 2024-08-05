@@ -1,3 +1,4 @@
+/* eslint-disable handle-callback-err */
 /* eslint-disable no-alert */
 /* eslint-disable prettier/prettier */
 import {View, Text, Image, TextInput, TouchableOpacity} from 'react-native';
@@ -29,8 +30,7 @@ export default function SignInScreen( ) {
         });
       })
       .catch(err => {
-        console.error('Login failed', err);
-        alert('Login failed: ' + err.toString());
+        alert('Login failed, wrong credentials');
       });
       }else{
         alert('Please fill all the fields');
@@ -55,7 +55,7 @@ export default function SignInScreen( ) {
               <Text className={`${color.heading} text-lg font-bold`}>Email</Text>
               <TextInput value={email} onChangeText={value=> setEmail(value)} className="p-4 bg-white rounded-full mb-3"/>
               <Text className={`${color.heading} text-lg font-bold`}>Password</Text>
-              <TextInput value={password} onChangeText={value=> setPassword(value)}className="p-4 bg-white rounded-full mb-3"/>
+              <TextInput value={password} onChangeText={value=> setPassword(value)} className="p-4 bg-white rounded-full mb-3"/>
               <TouchableOpacity onPress={()=> navigation.navigate('Forgot')} className="flex-row justify-end">
                 <Text>Forgot Password?</Text>
               </TouchableOpacity>

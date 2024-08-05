@@ -58,9 +58,9 @@ export default function HomeScreen() {
     </TouchableOpacity>
   );
   return (
-    <ScreenWraper className="flex-1">
+    <ScreenWraper>
         <View className="flex-row justify-between items-center p-4 mt-7">
-          <Text className={`${color.heading} font-bold text-3xl shadow-sm`}>Welcome User@utn.ac.cr!</Text>
+          <Text className={`${color.heading} font-bold text-4xl shadow-sm`}>Welcome User@utn.ac.cr!</Text>
           <TouchableOpacity onPress={()=> navigation.navigate('Welcome')} className="p-2 px-3 bg-white border border-gray-200 rounded-full">
             <Text className={color.heading}>Logout</Text>
           </TouchableOpacity>
