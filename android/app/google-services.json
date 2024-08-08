@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "184164305958",
+    "project_id": "studentservice-utn",
+    "storage_bucket": "studentservice-utn.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184164305958:android:008cf7fe465205cd442ae7",
+        "android_client_info": {
+          "package_name": "com.studentserviceapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDU9Gm4b3IlDkRb65ESuBbyPS1ZzneVXNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

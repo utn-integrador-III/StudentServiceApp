@@ -1,85 +1,119 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import React, { Component, useState } from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, Alert, Dimensions, ScrollView} from 'react-native';
+import React, { Component, useState, useEffect } from 'react';
 import BackButton from '../components/backButton';
 import { useNavigation } from '@react-navigation/native';
 import ScreenWraper from '../components/screenWraper';
 import { color } from '../thems';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
+import { get_categories } from '../api/StudentServiceManager/category';
+
+const screenWidth = Dimensions.get('window').width; // Get screen width
 
 export default function CategoryScreen() {
   const navigation = useNavigation();
-  const [tableHead, setTableHead] = useState(['Head', 'Head2', 'Head3', 'Head4', 'Head5']);
-  const [tableData, setTableData] = useState([
-    ['1', '2', '3', '4'],
-    ['a', 'b', 'c', 'd'],
-    ['1', '2', '3', '4'],
-    ['a', 'b', 'c', 'd'],
-  ]);
+  const [tableHead, setTableHead] = useState(['ID', 'Name']);
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    get_categories()
+      .then(response => {
+        if (response && response.data) {
+          const formattedData = response.data.map(category => [
+            category._id,
+            category.category_name,
+          ]);
+          setTableData(formattedData);
+        } else {
+          console.error('Unexpected API response structure:', response);
+        }
+      })
+      .catch(error => {
+        console.error('Failed to fetch Zones', error);
+      });
+  }, []);
+
   const alertAction = (index, action) => {
     Alert.alert(`This is row ${index + 1} for ${action}`);
   };
 
-  const updateButton = (data, index) => (
-    <TouchableOpacity onPress={() => alertAction(index, 'Update')}>
-      <View style={styles.btn}>
-        <Text style={styles.btnText}>Update</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
-  const deleteButton = (data, index) => (
-    <TouchableOpacity onPress={() => alertAction(index, 'Delete')}>
-      <View style={styles.btnDelete}>
-        <Text style={styles.btnText}>Delete</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
   return (
-  <ScreenWraper>
-      <View className="flex justify-between h-full mx-4 mt-10">
-        <View className="mt-5">
-          <View className="relative flex-row justify-between items-center p-4">
-            <View className=" absolute top-0 bottom-5 left-0 z-10">
-              <BackButton/>
-            </View>
-            <Text className={`${color.button} text-xl font-bold text-center mt-5`}>Category List</Text>
-            <TouchableOpacity onPress={()=> navigation.navigate('Home')} style={{backgroundColor:'#04bf04' }} className="p-2 px-3 bg-white border border-gray-200 rounded-full">
-              <Text className={color.heading}>Add Category</Text>
-            </TouchableOpacity>
-          </View>
+    <ScreenWraper>
+      <ScrollView>
+        <View className="flex justify-between h-full mx-4 mt-10">
+          <View>
           <View className="mt-5">
-            <Table borderStyle={{borderColor: 'transparent'}}>
-              <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
-              {
-                tableData.map((rowData, index) => (
+            <View className="relative flex-row justify-between items-center p-4">
+              <View className=" absolute top-0 bottom-5 left-0 z-10">
+                <BackButton/>
+              </View>
+              <Text className={`${color} text-xl font-bold text-center mt-5`}>Category List</Text>
+            </View>
+          </View>
+            <View className="mt-1">
+              <Table borderStyle={{borderColor: 'transparent'}}>
+                <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
+                {tableData.map((rowData, index) => (
                   <TableWrapper key={index} style={styles.row}>
-                    {
-                      rowData.map((cellData, cellIndex) => (
-                        <Cell key={cellIndex} data={cellData} textStyle={styles.text}/>
-                      ))
-                    }
-                    <Cell data={updateButton(null, index)} textStyle={styles.text}/>
-                    <Cell data={deleteButton(null, index)} textStyle={styles.text}/>
+                    {rowData.map((cellData, cellIndex) => (
+                      <Cell
+                        key={cellIndex}
+                        data={cellIndex >= 2 ? (cellIndex === 2 ? (cellData) : (cellData)) : cellData}
+                        textStyle={styles.text}
+                        style={[styles.cell, {flex: (cellIndex === 0 ? 3 : 4)}]} // Adjust cell flex based on content
+                      />
+                    ))}
                   </TableWrapper>
-                ))
-              }
-          </Table>
+                ))}
+              </Table>
+            </View>
           </View>
         </View>
-      </View>
-    </ScreenWraper>
-  );
+      </ScrollView>
+  </ScreenWraper>
+);
 }
+
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
-  head: { height: 40, backgroundColor: '#808B97' },
-  text: { margin: 6 },
-  row: { flexDirection: 'row', backgroundColor: '#FFF1C1' },
-  btn: { width: 58, height: 18, backgroundColor: '#78B7BB', borderRadius: 2 },
-  btnDelete: { width: 58, height: 18, backgroundColor: '#DB5461', borderRadius: 2 },
-  btnText: { textAlign: 'center', color: '#fff' },
-  textTitle: { textAlign: 'center', fontWeight: 'bold', fontSize: 24, marginBottom: 12 }
+  container: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 30,
+    backgroundColor: '#fff',
+  },
+  head: {
+    height: 60, // Increase header height
+    backgroundColor: '#1B3069', // Darker shade for better contrast
+    },
+    text: {
+      margin: 6,
+      color: '#f7f3f2', // Change text color to white for better readability
+      textAlign: 'center',
+    },
+
+    row: {
+      flexDirection: 'row',
+      backgroundColor: '#B5C0D0',
+      minHeight: 60, // Slightly taller rows for better touch interaction
+      alignItems: 'center',
+      marginVertical: 2, // Adds space between rows
+    },
+    cell: {
+      flex: 1, // Ensures equal width for all cells unless specified
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  btnText: {
+    textAlign: 'center',
+    color: '#fff',
+  },
+  textTitle: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 24,
+    marginBottom: 12,
+    flex: 1, // Give the title flex space to center it properly
+    color: '#000',
+  },
 });

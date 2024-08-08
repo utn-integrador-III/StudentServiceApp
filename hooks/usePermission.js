@@ -6,12 +6,12 @@ import {request, check, RESULTS} from 'react-native-permissions';
 const usePermission = permissionType => {
   const [permissionStatus, setPermissionStatus] = useState(null);
 
-  //checking permission status
+  // Checking permission status
   useEffect(() => {
     checkPermissionStatus();
   }, [checkPermissionStatus]);
 
-  //handling block status
+  // Handling block status
   useEffect(() => {
     if (permissionStatus === RESULTS.BLOCKED) {
       handleBlockedPermission();
@@ -21,6 +21,7 @@ const usePermission = permissionType => {
   const checkPermissionStatus = useCallback(async () => {
     try {
       const status = await check(permissionType);
+      console.log(status);
       setPermissionStatus(status);
     } catch (error) {
       console.error('Error checking permission:', error);

@@ -1,7 +1,7 @@
 /* eslint-disable no-trailing-spaces */
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Dimensions, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ScreenWraper from '../components/screenWraper';
 import BackButton from '../components/backButton';
@@ -11,7 +11,7 @@ import { get_lost_objects } from '../api/StudentServiceManager/lostObject';
 
 const screenWidth = Dimensions.get('window').width; // Get screen width
 
-export default function ZoneScreen() {
+export default function LostObjectScreen() {
   const navigation = useNavigation();
   const [tableHead, setTableHead] = useState(['Name', 'Status', 'Claimer', 'Update', 'Delete']);
   const [tableData, setTableData] = useState([]);
@@ -37,12 +37,13 @@ export default function ZoneScreen() {
       });
   }, []);
 
-  const alertAction = (index, action) => {
-    Alert.alert(`This is row ${index + 1} for ${action}`);
+  const alertAction = (index, data) => {
+    console.log(data);
+    Alert.alert(`This is row ${index + 1} for ${data}`);
   };
 
   const updateButton = (data, index) => (
-    <TouchableOpacity onPress={() => navigation.navigate('Update')}>
+    <TouchableOpacity onPress={() => {alertAction(index, data);}}>
       <View style={styles.btn}>
         <Text style={styles.btnText}>Update</Text>
       </View>
@@ -59,38 +60,40 @@ export default function ZoneScreen() {
 
   return (
     <ScreenWraper>
-      <View className="flex justify-between h-full mx-4 mt-10">
-        <View>
-        <View className="mt-5">
-          <View className="relative flex-row justify-between items-center p-4">
-            <View className=" absolute top-0 bottom-5 left-0 z-10">
-              <BackButton/>
+      <ScrollView>
+        <View className="flex justify-between h-full mx-4 mt-10">
+          <View>
+          <View className="mt-5">
+            <View className="relative flex-row justify-between items-center p-4">
+              <View className=" absolute top-0 bottom-5 left-0 z-10">
+                <BackButton/>
+              </View>
+              <Text className={`${color} text-xl font-bold text-center mt-5`}>LostObject List</Text>
+              <TouchableOpacity onPress={()=> navigation.navigate('Add')} style={{backgroundColor:'#A5DD9B' }} className="p-2 px-3 bg-white border border-gray-200 rounded-full">
+                <Text className={`${color.heading} font-Roboto`}>Report Object</Text>
+              </TouchableOpacity>
             </View>
-            <Text className={`${color} text-xl font-bold text-center mt-5`}>LostObject List</Text>
-            <TouchableOpacity onPress={()=> navigation.navigate('Add')} style={{backgroundColor:'#04bf04' }} className="p-2 px-3 bg-white border border-gray-200 rounded-full">
-              <Text className={color.heading}>Report Object</Text>
-            </TouchableOpacity>
+          </View>
+            <View className="mt-1">
+              <Table borderStyle={{borderColor: 'transparent'}}>
+                <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
+                {tableData.map((rowData, index) => (
+                  <TableWrapper key={index} style={styles.row}>
+                    {rowData.map((cellData, cellIndex) => (
+                      <Cell 
+                        key={cellIndex} 
+                        data={cellIndex >= 3 ? (cellIndex === 3 ? updateButton(cellData, index) : deleteButton(cellData, index)) : cellData} 
+                        textStyle={styles.text}
+                        style={[styles.cell, {flex: (cellIndex === 0 ? 2 : 3)}]} // Adjust cell flex based on content
+                      />
+                    ))}
+                  </TableWrapper>
+                ))}
+              </Table>
+            </View>
           </View>
         </View>
-          <View className="mt-10">
-            <Table borderStyle={{borderColor: 'transparent'}}>
-              <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
-              {tableData.map((rowData, index) => (
-                <TableWrapper key={index} style={styles.row}>
-                  {rowData.map((cellData, cellIndex) => (
-                    <Cell 
-                      key={cellIndex} 
-                      data={cellIndex >= 3 ? (cellIndex === 3 ? updateButton(cellData, index) : deleteButton(cellData, index)) : cellData} 
-                      textStyle={styles.text}
-                      style={[styles.cell, {flex: (cellIndex === 0 ? 2 : 3)}]} // Adjust cell flex based on content
-                    />
-                  ))}
-                </TableWrapper>
-              ))}
-            </Table>
-          </View>
-        </View>
-      </View>
+      </ScrollView>
     </ScreenWraper>
   );
 }
@@ -104,17 +107,17 @@ const styles = StyleSheet.create({
   },
   head: { 
   height: 60, // Increase header height
-  backgroundColor: '#4F4F4F', // Darker shade for better contrast
+  backgroundColor: '#1B3069', // Darker shade for better contrast
   },
   text: { 
     margin: 6,
-    color: '#000', // Change text color to white for better readability
+    color: '#f7f3f2', // Change text color to white for better readability
     textAlign: 'center', 
   },
 
   row: { 
     flexDirection: 'row', 
-    backgroundColor: '#FFF1C1', 
+    backgroundColor: '#B5C0D0', 
     minHeight: 60, // Slightly taller rows for better touch interaction
     alignItems: 'center',
     marginVertical: 2, // Adds space between rows
@@ -127,7 +130,7 @@ const styles = StyleSheet.create({
 btn: { 
     width: screenWidth * 0.15, // Responsive width
     height: 35, // Larger touch area
-    backgroundColor: '#78B7BB', 
+    backgroundColor: '#545B77', 
     borderRadius: 2,
     justifyContent: 'center', 
   },

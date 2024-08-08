@@ -10,7 +10,7 @@ export const get_categories = async () => {
           console.log(token);
         throw new Error('Authentication token not found');
       }
-      const result = await ApiManagerStudent('/zone', {
+      const result = await ApiManagerStudent('/category', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

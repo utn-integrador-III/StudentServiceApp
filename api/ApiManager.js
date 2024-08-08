@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 import axios from 'axios';
 const ApiManager = axios.create({
-    baseURL: 'http://127.0.0.1:5002',
+    baseURL: 'http://10.0.2.2:5002',
     responseType: 'json',
     withCredentials: true,
 })
