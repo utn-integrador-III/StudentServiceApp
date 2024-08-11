@@ -180,7 +180,7 @@ export default function AddReportScreen() {
               setIsFocus(false);
             }}
             />
-            <Text className={`${color.heading} text-lg font-bold mt-3`}> Your Email</Text>
+            <Text className={`${color.heading} text-lg font-bold mt-3`}> Finder Email</Text>
             <TextInput onChangeText={value => setEmail(value)} className="p-1 bg-white rounded-full mb-3"/>
             {selectImage ? (
             <Image className="h-48 w-48 self-center" source={{uri: selectImage}} style={styles.selectedImage} />

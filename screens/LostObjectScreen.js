@@ -7,13 +7,14 @@ import ScreenWraper from '../components/screenWraper';
 import BackButton from '../components/backButton';
 import { color } from '../thems';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
-import { get_lost_objects } from '../api/StudentServiceManager/lostObject';
-
+import { delete_lost_object, get_byId_lost_object, get_lost_objects } from '../api/StudentServiceManager/lostObject';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 const screenWidth = Dimensions.get('window').width; // Get screen width
 
 export default function LostObjectScreen() {
   const navigation = useNavigation();
-  const [tableHead, setTableHead] = useState(['Name', 'Status', 'Claimer', 'Update', 'Delete']);
+  const [tableHead, setTableHead] = useState(['ID','Name', 'Status', 'Claimer', 'Delete']);
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
@@ -21,10 +22,10 @@ export default function LostObjectScreen() {
       .then(response => {
         if (response && response.data) {
           const formattedData = response.data.map(lostObject => [
+            lostObject._id,
             lostObject.name, 
             lostObject.status, 
             lostObject.claimer, 
-            '', // Placeholder for update button
             '',  // Placeholder for delete button
           ]);
           setTableData(formattedData);
@@ -37,21 +38,38 @@ export default function LostObjectScreen() {
       });
   }, []);
 
-  const alertAction = (index, data) => {
-    console.log(data);
-    Alert.alert(`This is row ${index + 1} for ${data}`);
+  const delete_Object = async (id) => {
+    try{
+      const objData = await get_byId_lost_object(id);
+      if (!objData){
+        throw new Error('Lost Object not Found');
+      }
+      const imgURL = objData.data.attachment_path;
+      // Query Firestore to find the document by imageUrl
+      const querySnapshot = await firestore().collection('images').where('url', '==', imgURL).get();
+      if (querySnapshot.empty) {
+        throw new Error('No matching Firestore document found!');
+      }
+      // Assuming only one document will match, adjust as necessary
+      const firestoreDoc = querySnapshot.docs[0];
+      console.log("Deleting Firestore document with ID: ", firestoreDoc.id);
+      // Delete the Firestore document
+      await firestoreDoc.ref.delete();
+      console.log("Firebase Storage image deleted");
+      // Delete the image from Firebase Storage
+      const imageRef = storage().refFromURL(imgURL);
+      await imageRef.delete();
+      delete_lost_object(id).then(async (result) => {
+        // Show alert for photo taken and saved
+        Alert.alert('Success', 'Object Deleted!');
+      });
+    } catch (e) {
+      console.error('Error Deleting the Object', e);
+    }
   };
 
-  const updateButton = (data, index) => (
-    <TouchableOpacity onPress={() => {alertAction(index, data);}}>
-      <View style={styles.btn}>
-        <Text style={styles.btnText}>Update</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
   const deleteButton = (data, index) => (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={()=> {delete_Object(data[0])}}>
       <View style={styles.btnDelete}>
         <Text style={styles.btnText}>Delete</Text>
       </View>
@@ -82,9 +100,9 @@ export default function LostObjectScreen() {
                     {rowData.map((cellData, cellIndex) => (
                       <Cell 
                         key={cellIndex} 
-                        data={cellIndex >= 3 ? (cellIndex === 3 ? updateButton(cellData, index) : deleteButton(cellData, index)) : cellData} 
+                        data={cellIndex >= 4 ? (cellIndex = deleteButton(rowData, index)) : cellData} 
                         textStyle={styles.text}
-                        style={[styles.cell, {flex: (cellIndex === 0 ? 2 : 3)}]} // Adjust cell flex based on content
+                        style={[styles.cell, {flex: (cellIndex === 0 ? 2 : 2)}]} // Adjust cell flex based on content
                       />
                     ))}
                   </TableWrapper>
