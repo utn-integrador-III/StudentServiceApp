@@ -48,7 +48,6 @@ export default function SignInScreen( ) {
               </View>
               <Text className={`${color.heading} text-xl font-bold text-center`}>SignIn</Text>
             </View>
-
               <View className="flex-row justify-center my-3 mt-5">
                 <Image className="h-60 w-60" source={require('../assets/images/login.png')}/>
               </View>
