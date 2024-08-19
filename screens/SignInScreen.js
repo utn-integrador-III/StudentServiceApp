@@ -22,12 +22,15 @@ export default function SignInScreen( ) {
         email:email,
         password:password,
       }).then(async (result) => {
-        await AsyncStorage.setItem('Token', result.data.token);
-        console.log(result.data.token);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Home' }],
-        });
+        console.log(result.data.message_code);
+        if(result.data.status === 'Active'){
+          await AsyncStorage.setItem('Token', result.data.token);
+          console.log(result.data.token);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+          });
+        }
       })
       .catch(err => {
         alert('Login failed, wrong credentials');

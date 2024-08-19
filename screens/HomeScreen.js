@@ -1,17 +1,19 @@
+/* eslint-disable handle-callback-err */
+/* eslint-disable no-alert */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ScreenWraper from '../components/screenWraper';
 import { color } from '../thems';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { verify_auth } from '../api/userAPI';
 const images = {
   ajustes: require('../assets/images/ajustes.png'),
   bitacora: require('../assets/images/bitacora.png'),
   lostandfound: require('../assets/images/lostandfound.png'),
 };
-
 var items = [
   {
     id:1,
@@ -34,21 +36,36 @@ var items = [
 ];
 
 export default function HomeScreen() {
+  const [authenticated, setAuthenticated] = useState(true);
   useEffect(()=>{
-    setTimeout(()=>{
-      //handleGetToken();
-    }, 20000);
   });
   const navigation = useNavigation();
 
-  const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem('Token');
-    console.log(dataToken);
-    if(!dataToken){
+  const handleToken = (name) => {
+    verify_auth().then(async (result) => {
+      if(result.status === 200){
+        setAuthenticated(true);
+      }
+      else{
+        setAuthenticated(false);
+      }
+    })
+    .catch(err => {
+      alert('Login failed, wrong credentials');
+    });
+    if(!authenticated === true){
+      alert('Your session has expired, please login again');
       navigation.replace('Welcome');
     }
     else{
-      navigation.replace('Home');
+      const dataToken =  AsyncStorage.getItem('Token');
+      console.log(dataToken);
+      if(!dataToken){
+        navigation.replace('Welcome');
+      }
+      else{
+        navigation.replace(name);
+      }
     }
   };
   const renderItem = ({ item }) => (
